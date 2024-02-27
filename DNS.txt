@@ -1,0 +1,48 @@
+dpkg --get-selections | bind9
+apt-get purge (isi selections)
+apt-get autoremove
+
+Instalasi dan Konfigurasi DNS Server:
+1. Update siste: sudo apt update
+2. Install layanan DNS server: sudo apt install bind9
+3. Cek versi: sudo named -v
+4. Manajemen layanan DNS server:
+    jalankan DNS: sudo systemctl start bind9.service
+    menonaktifkan DNS: sudo systemctl stop bind9.service
+    cek status DNS: sudo systemctl status bind9.service
+	cd /etc/bind
+5. Konfigurasi DNS server:
+a. Konfig file named.conf.local
+    sudo nano /etc/bind/named.conf.local
+	zone "rizaltest.com" {
+		type master;
+		file "/etc/bind/db.rizaltest";
+	};
+	
+	zone "29.15.192.in-addr.arpa" {
+		type master;
+		notify no;
+		file "/etc/bind/db.1";
+	};
+
+b. Duplikasi file db.local menjadi db.rizaltest dan db.1
+
+c. Konfig file forward
+    sudo nano /etc/bind/db.rizaltest
+	add ns www CNAME	
+
+d. #Konfig file reverse
+    #sudo nano /etc/bind/reverse
+e. Tambahkan DNS name server: sudo nano /etc/resolv.conf
+f. Konfig file named.conf.options
+    sudo nano /etc/bind/named.conf.options
+g. Konfig firewall:
+    sudo ufw allow 53/tcp
+    sudo ufw enable
+    sudo ufw reload
+h. Restart DNS server: sudo systemctl restart bind9.service
+6. Pengujian:
+    nslookup smkbisa.com
+    nslookp IP_server
+    Jika sebelumnya sudah menginstall layanan web server, dapat juga dilakukan pengujian pada web browser:
+    masukkan alamat IP_server atau domain smkbisa.com
